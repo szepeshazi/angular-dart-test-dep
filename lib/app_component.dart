@@ -1,27 +1,23 @@
 import 'package:angular/angular.dart';
-import 'package:mockito/mockito.dart';
 import 'package:test_deps/environment.dart';
 
-@Component(selector: 'my-app', template: '<outer></outer>', directives: [
-  OuterComponent
-], providers: [
-  ValueProvider.forToken(isTestEnvironment, false),
-  ClassProvider.forToken(someServiceOverride, useClass: NoOverride)
-])
+@Component(selector: 'my-app', template: '<outer></outer>', directives: [OuterComponent])
 class AppComponent {}
 
 @Component(selector: 'outer', template: '<div>I am outer</div><inner></inner>', directives: [InnerComponent])
 class OuterComponent {}
 
-@Component(selector: 'inner', template: '<p>I am inner</p><p>Service says: {{serviceResult}}</p>', providers: [
-  FactoryProvider(SomeService, serviceFactory, deps: [someServiceOverride])
-])
+@Component(
+    selector: 'inner',
+    template: '<p>I am inner</p><p>Service says: {{serviceResult}}</p>',
+    providers: [ClassProvider(SomeService, useClass: SomeServiceImpl)])
 class InnerComponent implements OnInit {
   String serviceResult = 'Loading';
 
   final SomeService svc;
 
-  InnerComponent(this.svc) {
+  InnerComponent(SomeService service, @Optional() @Inject(someServiceOverride) serviceOverride)
+      : svc = serviceOverride ?? service {
     print('${svc.runtimeType}');
   }
 
@@ -32,14 +28,9 @@ class InnerComponent implements OnInit {
 }
 
 // Services
-SomeService serviceFactory(someServiceOverride) =>
-    someServiceOverride is NoOverride ? SomeServiceImpl() : someServiceOverride;
-
 abstract class SomeService {
   Future<String> call();
 }
-
-class NoOverride extends Mock implements SomeService {}
 
 class SomeServiceImpl implements SomeService {
   @override
