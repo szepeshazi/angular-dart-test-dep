@@ -1,5 +1,6 @@
 import 'package:angular/angular.dart';
-import 'package:test_deps/environment.dart';
+
+import 'service_overrides.dart';
 
 @Component(selector: 'my-app', template: '<outer></outer>', directives: [OuterComponent])
 class AppComponent {}
@@ -16,8 +17,7 @@ class InnerComponent implements OnInit {
 
   final SomeService svc;
 
-  InnerComponent(SomeService service, @Optional() @Inject(someServiceOverride) serviceOverride)
-      : svc = serviceOverride ?? service {
+  InnerComponent(SomeService service, @Optional() @Inject(someServiceOverride) override) : svc = override ?? service {
     print('${svc.runtimeType}');
   }
 

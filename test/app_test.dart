@@ -5,7 +5,7 @@ import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 import 'package:test_deps/app_component.dart';
 import 'package:test_deps/app_component.template.dart' as ng;
-import 'package:test_deps/environment.dart';
+import 'package:test_deps/service_overrides.dart';
 
 class FakeServiceImpl extends Mock implements SomeService {}
 
@@ -26,7 +26,6 @@ void main() {
   tearDown(disposeAnyRunningTest);
 
   test('service injection', () async {
-    await fixture.update();
     expect(fixture.text, contains('Fake it till you make it'));
   });
 }
